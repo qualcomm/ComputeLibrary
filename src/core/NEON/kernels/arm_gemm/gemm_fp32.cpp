@@ -123,7 +123,6 @@ GemmImplementation<float, float, float>::with_estimate(
     [](const GemmArgs &args) { return new GemmHybridIndirect<cls_a64_hybrid_fp32bf16fp32_mmla_4x24, float, float, float>(args); }
 ),
 #endif // ARM_COMPUTE_ENABLE_BF16
-
 #ifdef ARM_COMPUTE_ENABLE_SME
 {
     GemmMethod::GEMM_INTERLEAVED,
@@ -133,7 +132,6 @@ GemmImplementation<float, float, float>::with_estimate(
     [](const GemmArgs &args) { return new GemmInterleavedNoMerge<cls_sme1_interleaved_nomerge_fp32_mopa_2VLx2VL, float, float>(args); }
 },
 #endif // ARM_COMPUTE_ENABLE_SME
-
 #ifdef ARM_COMPUTE_ENABLE_SVE
 #ifdef ARM_COMPUTE_ENABLE_SME2
 // SME kernels
