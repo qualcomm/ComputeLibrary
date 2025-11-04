@@ -61,7 +61,6 @@
 #include "kernels/sme1_interleaved_nomerge_fp32_mopa_2VLx2VL.hpp"
 #endif // ARM_COMPUTE_ENABLE_SME
 
-
 #ifdef ARM_COMPUTE_ENABLE_SME2
 #include "kernels/sme2_gemv_fp32_mla_16VL.hpp"
 #include "kernels/sme2_gemv_fp32bf16fp32_dot_16VL.hpp"
@@ -125,9 +124,7 @@ GemmImplementation<float, float, float>::with_estimate(
 ),
 #endif // ARM_COMPUTE_ENABLE_BF16
 
-
 #ifdef ARM_COMPUTE_ENABLE_SME
-
 {
     GemmMethod::GEMM_INTERLEAVED,
     "sme1_interleaved_nomerge_fp32_mopa_2VLx2VL",
@@ -138,9 +135,6 @@ GemmImplementation<float, float, float>::with_estimate(
 #endif // ARM_COMPUTE_ENABLE_SME
 
 #ifdef ARM_COMPUTE_ENABLE_SVE
-
-
-
 #ifdef ARM_COMPUTE_ENABLE_SME2
 // SME kernels
 {
