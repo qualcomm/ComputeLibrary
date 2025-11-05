@@ -27,19 +27,6 @@
 //
 #ifdef ARM_COMPUTE_ENABLE_SME
 
-// generic.cpp
-#ifdef __aarch64__
-#include <arm_neon.h>
-// ACL already uses helpers like asmlib.hpp in many kernels:
-#include "../../asmlib.hpp"   // you’ll find this pattern in other kernels
-// e.g. a64_gemm_u8_4x4/generic.cpp includes asmlib.hpp for ASM conveniences
-// (ASM_PREFETCH, etc.) [5](https://github.com/ARM-software/ComputeLibrary/blob/main/src/core/NEON/kernels/arm_gemm/kernels/a64_gemm_u8_4x4/generic.cpp)
-
-// Make GAS macros visible to all subsequent asm blocks in this translation unit:
-//__asm__(
-//);
-#endif
-
 #include "arm_gemm.hpp"
 
 
@@ -798,4 +785,4 @@ void sme1_interleaved_nomerge_fp32_mopa_2VLx2VL(const float *const A, const floa
 
 }  // namespace arm_gemm
 
-#endif  // ARM_COMPUTE_ENABLE_SME2
+#endif  // ARM_COMPUTE_ENABLE_SME
