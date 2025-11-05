@@ -21,7 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#ifdef ARM_COMPUTE_ENABLE_SME2
+// + Changes from Qualcomm Technologies, Inc. are provided under the following license:
+// + Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+// + SPDX-License-Identifier:  MIT
+//
+#ifdef ARM_COMPUTE_ENABLE_SME
 
 // generic.cpp
 #ifdef __aarch64__
