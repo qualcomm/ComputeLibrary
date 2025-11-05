@@ -29,7 +29,7 @@
 
 #pragma once
 
-#ifdef ARM_COMPUTE_ENABLE_SME2
+#ifdef ARM_COMPUTE_ENABLE_SME
 
 
 #include "../std_transforms_sme.hpp"
@@ -97,4 +97,4 @@ public:
 
 } // namespace arm_gemm
 
-#endif // ARM_COMPUTE_ENABLE_SME2
+#endif // ARM_COMPUTE_ENABLE_SME
