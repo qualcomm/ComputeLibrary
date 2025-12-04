@@ -1,3 +1,29 @@
+.macro move_tile_vector_2,  reg1, reg2, tile, addr, pred
+mova \reg1, \pred/M, \tile[\addr, 0] 
+mova \reg2, \pred/M, \tile[\addr, 1] 
+.endm
+
+.macro sqdmulhconvert_2, reg1, reg2, reg5
+sqdmulh \reg1, \reg1, \reg5
+sqdmulh \reg2, \reg2, \reg5
+.endm
+
+.macro srshl__convert_2, reg1, reg2,  reg5  pred
+srshl \reg1, \pred/M, \reg1 , \reg5
+srshl \reg2, \pred/M, \reg2 , \reg5
+.endm
+
+.macro add____convert_2, reg1, reg2,  reg5
+add \reg1, \reg1, \reg5
+add \reg2, \reg2, \reg5
+.endm
+
+.macro sclamp_convert_2, reg1, reg2,  min_val, max_val, pred
+sclamp \reg1,  \min_val, \max_val
+sclamp \reg2,  \min_val, \max_val
+.endm
+
+
 .macro ld1b_4, reg1, reg2, reg3, reg4, pred, addr
 ld1b \reg1, \pred/Z, [\addr]
 ld1b \reg2, \pred/Z, [\addr, #1, MUL VL]

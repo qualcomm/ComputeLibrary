@@ -37,6 +37,12 @@
 #include "kernels/a64_smallK_hybrid_u8u32_dot_8x4.hpp"
 
 #ifdef ARM_COMPUTE_ENABLE_SVE
+#ifdef ARM_COMPUTE_ENABLE_SME
+#include "kernels/sme_interleaved_nomerge_u8q_mopa_1VLx4VL.hpp"
+#include "kernels/sme_interleaved_nomerge_u8q_mopa_2VLx2VL.hpp"
+#include "kernels/sme_interleaved_nomerge_u8q_mopa_4VLx1VL.hpp"
+#endif // ARM_COMPUTE_ENABLE_SME
+
 #ifdef ARM_COMPUTE_ENABLE_SME2
 #include "kernels/sme2_gemv_u8qa_dot_16VL.hpp"
 #include "kernels/sme2_interleaved_nomerge_u8q_mopa_1VLx4VL.hpp"
@@ -63,6 +69,34 @@ namespace arm_gemm {
 static const GemmImplementation<uint8_t, uint8_t, uint8_t, Requantize32> gemm_quint8_methods[] =
 {
 #ifdef ARM_COMPUTE_ENABLE_SVE
+#ifdef ARM_COMPUTE_ENABLE_SME
+// SME kernels
+
+{
+    GemmMethod::GEMM_INTERLEAVED,
+    "sme_interleaved_nomerge_u8q_mopa_1VLx4VL",
+    [](const GemmArgs &args, const Requantize32 &qp) { return args._ci->has_sme() && ((qp.per_channel_requant && (qp.per_channel_left_shifts == nullptr)) || (!qp.per_channel_requant && (qp.per_layer_left_shift == 0)));},
+    [](const GemmArgs &args, const Requantize32 &) { const auto VL = sme::get_vector_length<uint32_t>();
+                               return args._Nsize >= 8*VL || args._Msize <= VL || (2*VL < args._Msize && args._Msize <= 3*VL); },
+    [](const GemmArgs &args, const Requantize32 &qp) { return new GemmInterleavedPretransposedNoMergeQuantizedInline<cls_sme_interleaved_nomerge_u8q_mopa_1VLx4VL, uint8_t, uint8_t>(args, qp); }
+},
+{
+    GemmMethod::GEMM_INTERLEAVED,
+    "sme_interleaved_nomerge_u8q_mopa_4VLx1VL",
+    [](const GemmArgs &args, const Requantize32 &qp) { return args._ci->has_sme() && ((qp.per_channel_requant && (qp.per_channel_left_shifts == nullptr)) || (!qp.per_channel_requant && (qp.per_layer_left_shift == 0)));},
+    [](const GemmArgs &args, const Requantize32 &) { const auto VL = sme::get_vector_length<int32_t>();
+                               return args._Nsize <= VL || (2*VL < args._Nsize && args._Nsize <= 3*VL); },
+    [](const GemmArgs &args, const Requantize32 &qp) { return new GemmInterleavedPretransposedNoMergeQuantizedInline<cls_sme_interleaved_nomerge_u8q_mopa_4VLx1VL, uint8_t, uint8_t>(args, qp); }
+},
+{
+    GemmMethod::GEMM_INTERLEAVED,
+    "sme_interleaved_nomerge_u8q_mopa_2VLx2VL",
+    [](const GemmArgs &args, const Requantize32 &qp) { return args._ci->has_sme() && ((qp.per_channel_requant && (qp.per_channel_left_shifts == nullptr)) || (!qp.per_channel_requant && (qp.per_layer_left_shift == 0)));},
+    nullptr,
+    [](const GemmArgs &args, const Requantize32 &qp) { return new GemmInterleavedPretransposedNoMergeQuantizedInline<cls_sme_interleaved_nomerge_u8q_mopa_2VLx2VL, uint8_t, uint8_t>(args, qp); }
+},
+#endif // ARM_COMPUTE_ENABLE_SME
+
 #ifdef ARM_COMPUTE_ENABLE_SME2
 // SME kernels
 {
