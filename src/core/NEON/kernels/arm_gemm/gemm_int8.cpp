@@ -40,6 +40,12 @@
 #include "kernels/a64_smallK_hybrid_s8s32_dot_8x4.hpp"
 
 #ifdef ARM_COMPUTE_ENABLE_SVE
+#ifdef ARM_COMPUTE_ENABLE_SME
+#include "kernels/sme_interleaved_nomerge_s8s32_mopa_1VLx4VL.hpp"
+#include "kernels/sme_interleaved_nomerge_s8s32_mopa_2VLx2VL.hpp"
+#include "kernels/sme_interleaved_nomerge_s8s32_mopa_4VLx1VL.hpp"
+#endif // ARM_COMPUTE_ENABLE_SME
+
 #ifdef ARM_COMPUTE_ENABLE_SME2
 #include "kernels/sme2_interleaved_nomerge_s8s32_mopa_1VLx4VL.hpp"
 #include "kernels/sme2_interleaved_nomerge_s8s32_mopa_2VLx2VL.hpp"
@@ -56,6 +62,34 @@ namespace arm_gemm {
 
 static const GemmImplementation<int8_t, int8_t, int32_t> gemm_s8_methods[] = {
 #ifdef ARM_COMPUTE_ENABLE_SVE
+#ifdef ARM_COMPUTE_ENABLE_SME
+// SME kernels
+{
+    GemmMethod::GEMM_INTERLEAVED,
+    "sme_interleaved_nomerge_s8s32_mopa_1VLx4VL",
+    [](const GemmArgs &args) { return args._ci->has_sme(); },
+    [](const GemmArgs &args) { const auto VL = sme::get_vector_length<int32_t>();
+                               return args._Nsize >= 8*VL || args._Msize <= VL || (2*VL < args._Msize && args._Msize <= 3*VL); },
+    [](const GemmArgs &args) { return new GemmInterleavedNoMerge<cls_sme_interleaved_nomerge_s8s32_mopa_1VLx4VL, int8_t, int32_t>(args); }
+},
+{
+    GemmMethod::GEMM_INTERLEAVED,
+    "sme_interleaved_nomerge_s8s32_mopa_4VLx1VL",
+    [](const GemmArgs &args) { return args._ci->has_sme(); },
+    [](const GemmArgs &args) { const auto VL = sme::get_vector_length<int32_t>();
+                               return args._Nsize <= VL || (2*VL < args._Nsize && args._Nsize <= 3*VL); },
+    [](const GemmArgs &args) { return new GemmInterleavedNoMerge<cls_sme_interleaved_nomerge_s8s32_mopa_4VLx1VL, int8_t, int32_t>(args); }
+},
+{
+    GemmMethod::GEMM_INTERLEAVED,
+    "sme_interleaved_nomerge_s8s32_mopa_2VLx2VL",
+    [](const GemmArgs &args) { return args._ci->has_sme(); },
+    nullptr,
+    [](const GemmArgs &args) { return new GemmInterleavedNoMerge<cls_sme_interleaved_nomerge_s8s32_mopa_2VLx2VL, int8_t, int32_t>(args); }
+},
+#endif // ARM_COMPUTE_ENABLE_SME
+
+
 #ifdef ARM_COMPUTE_ENABLE_SME2
 // SME kernels
 {

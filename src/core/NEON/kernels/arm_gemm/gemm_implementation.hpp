@@ -28,6 +28,9 @@
 
 #include <cstdint>
 #include <functional>
+#include <cstddef>
+#include <iostream>
+#include <chrono>
 
 namespace arm_gemm {
 
@@ -242,6 +245,7 @@ bool find_implementation(const GemmArgs &args, const OutputStage &os, const Gemm
     const GemmImplementation<Tlop, Trop, Tret, OutputStage> *saved_impl = nullptr;
     uint64_t best_estimate = 0;
 
+    std::cout << "find_implementation called for GEMM args: "  << std::endl;//raksh_
     for (const GemmImplementation<Tlop, Trop, Tret, OutputStage> *i = gemms; i->method != GemmMethod::DEFAULT; i++) {
         /* Skip if this implementation doesn't support these args. */
         if (!i->do_is_supported(args, os)) {
@@ -264,6 +268,7 @@ bool find_implementation(const GemmArgs &args, const OutputStage &os, const Gemm
         /* Short circuit - if the estimate is zero, return this one immediately. */
         if (estimate==0) {
             impl=i;
+            std::cout << "Selected GEMM kernel (zero estimate): " << impl->name << std::endl; //raksh_
             return true;
         }
 
@@ -278,6 +283,7 @@ bool find_implementation(const GemmArgs &args, const OutputStage &os, const Gemm
     /* Return whichever method gave the best estimate. */
     if (saved_impl != nullptr) {
         impl = saved_impl;
+        std::cout << "Selected GEMM kernel: " << impl->name << std::endl; //raksh_
         return true;
     }
 

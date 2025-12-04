@@ -255,6 +255,11 @@ target_sources(
 	core/NEON/kernels/arm_gemm/kernels/sme1_interleaved_nomerge_s8q_mopa_1VLx4VL/generic.cpp
 	core/NEON/kernels/arm_gemm/kernels/sme1_interleaved_nomerge_s8q_mopa_2VLx2VL/generic.cpp
 	core/NEON/kernels/arm_gemm/kernels/sme1_interleaved_nomerge_s8q_mopa_4VLx1VL/generic.cpp
+	
+	core/NEON/kernels/arm_gemm/kernels/sme_interleaved_nomerge_s8s32_mopa_1VLx4VL/generic.cpp
+	core/NEON/kernels/arm_gemm/kernels/sme_interleaved_nomerge_s8s32_mopa_2VLx2VL/generic.cpp
+	core/NEON/kernels/arm_gemm/kernels/sme_interleaved_nomerge_s8s32_mopa_4VLx1VL/generic.cpp
+	
 	core/NEON/kernels/arm_gemm/kernels/sve_ffhybrid_bf16fp32_mmla_6x4VL/generic.cpp
 	core/NEON/kernels/arm_gemm/kernels/sve_ffhybrid_fp16_mla_6x4VL/a64fx.cpp
 	core/NEON/kernels/arm_gemm/kernels/sve_ffhybrid_fp16_mla_6x4VL/generic.cpp
