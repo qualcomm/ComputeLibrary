@@ -51,6 +51,12 @@
 #endif // ARM_COMPUTE_ENABLE_FIXED_FORMAT_KERNELS
 
 #ifdef ARM_COMPUTE_ENABLE_SVE
+#ifdef ARM_COMPUTE_ENABLE_SME
+#include "kernels/sme_interleaved_nomerge_bf16fp32_mopa_1VLx4VL.hpp"
+#include "kernels/sme_interleaved_nomerge_bf16fp32_mopa_2VLx2VL.hpp"
+#include "kernels/sme_interleaved_nomerge_bf16fp32_mopa_4VLx1VL.hpp"
+#endif // ARM_COMPUTE_ENABLE_SME
+
 #ifdef ARM_COMPUTE_ENABLE_SME2
 #include "kernels/sme2_gemv_bf16fp32_dot_16VL.hpp"
 #include "kernels/sme2_interleaved_nomerge_bf16fp32_mopa_1VLx4VL.hpp"
@@ -73,6 +79,35 @@ static const GemmImplementation<bfloat16, bfloat16, float> gemm_bf16_methods[] =
 #ifdef ARM_COMPUTE_ENABLE_BF16
 #ifdef __aarch64__
 #ifdef ARM_COMPUTE_ENABLE_SVE
+
+#ifdef ARM_COMPUTE_ENABLE_SME
+// SME kernels
+
+{
+    GemmMethod::GEMM_INTERLEAVED,
+    "sme_interleaved_nomerge_bf16fp32_mopa_1VLx4VL",
+    [](const GemmArgs &args) { return args._ci->has_sme(); },
+    [](const GemmArgs &args) { const auto VL = sme::get_vector_length<float>();
+                               return args._Nsize >= 8*VL || args._Msize <= VL || (2*VL < args._Msize && args._Msize <= 3*VL); },
+    [](const GemmArgs &args) { return new GemmInterleavedNoMerge<cls_sme_interleaved_nomerge_bf16fp32_mopa_1VLx4VL, bfloat16, float>(args); }
+},
+{
+    GemmMethod::GEMM_INTERLEAVED,
+    "sme_interleaved_nomerge_bf16fp32_mopa_4VLx1VL",
+    [](const GemmArgs &args) { return args._ci->has_sme(); },
+    [](const GemmArgs &args) { const auto VL = sme::get_vector_length<float>();
+                               return args._Nsize <= VL || (2*VL < args._Nsize && args._Nsize <= 3*VL); },
+    [](const GemmArgs &args) { return new GemmInterleavedNoMerge<cls_sme_interleaved_nomerge_bf16fp32_mopa_4VLx1VL, bfloat16, float>(args); }
+},
+{
+    GemmMethod::GEMM_INTERLEAVED,
+    "sme_interleaved_nomerge_bf16fp32_mopa_2VLx2VL",
+    [](const GemmArgs &args) { return args._ci->has_sme(); },
+    nullptr,
+    [](const GemmArgs &args) { return new GemmInterleavedNoMerge<cls_sme_interleaved_nomerge_bf16fp32_mopa_2VLx2VL, bfloat16, float>(args); }
+},
+#endif // ARM_COMPUTE_ENABLE_SME
+
 #ifdef ARM_COMPUTE_ENABLE_SME2
 // SME kernels
 {

@@ -59,6 +59,9 @@
 
 #ifdef ARM_COMPUTE_ENABLE_SME
 #include "kernels/sme1_interleaved_nomerge_fp32_mopa_2VLx2VL.hpp"
+#include "kernels/sme_interleaved_nomerge_bf16fp32_mopa_1VLx4VL.hpp"
+#include "kernels/sme_interleaved_nomerge_bf16fp32_mopa_2VLx2VL.hpp"
+#include "kernels/sme_interleaved_nomerge_bf16fp32_mopa_4VLx1VL.hpp"
 #endif // ARM_COMPUTE_ENABLE_SME
 
 #ifdef ARM_COMPUTE_ENABLE_SME2
@@ -124,6 +127,38 @@ GemmImplementation<float, float, float>::with_estimate(
 ),
 #endif // ARM_COMPUTE_ENABLE_BF16
 #ifdef ARM_COMPUTE_ENABLE_SME
+#ifdef ARM_COMPUTE_ENABLE_BF16
+{
+    GemmMethod::GEMM_INTERLEAVED,
+    "sme_interleaved_nomerge_bf16fp32_mopa_1VLx4VL",
+    [](const GemmArgs &args) { return args._fast_mode && args._ci->has_sme() && !args._accumulate; },
+    [](const GemmArgs &args) { const auto VL = sme::get_vector_length<float>();
+                               return args._Nsize >= 8*VL || args._Msize <= VL || (2*VL < args._Msize && args._Msize <= 3*VL); },
+    [](const GemmArgs &args) { return new GemmInterleavedNoMerge<cls_sme_interleaved_nomerge_bf16fp32_mopa_1VLx4VL, float, float>(args); }
+},
+#endif // ARM_COMPUTE_ENABLE_BF16
+
+#ifdef ARM_COMPUTE_ENABLE_BF16
+{
+    GemmMethod::GEMM_INTERLEAVED,
+    "sme_interleaved_nomerge_bf16fp32_mopa_4VLx1VL",
+    [](const GemmArgs &args) { return args._fast_mode && args._ci->has_sme() && !args._accumulate; },
+    [](const GemmArgs &args) { const auto VL = sme::get_vector_length<float>();
+                               return args._Nsize <= VL || (2*VL < args._Nsize && args._Nsize <= 3*VL); },
+    [](const GemmArgs &args) { return new GemmInterleavedNoMerge<cls_sme_interleaved_nomerge_bf16fp32_mopa_4VLx1VL, float, float>(args); }
+},
+#endif // ARM_COMPUTE_ENABLE_BF16
+
+#ifdef ARM_COMPUTE_ENABLE_BF16
+{
+    GemmMethod::GEMM_INTERLEAVED,
+    "sme_interleaved_nomerge_bf16fp32_mopa_2VLx2VL",
+    [](const GemmArgs &args) { return args._fast_mode && args._ci->has_sme() && !args._accumulate; },
+    nullptr,
+    [](const GemmArgs &args) { return new GemmInterleavedNoMerge<cls_sme_interleaved_nomerge_bf16fp32_mopa_2VLx2VL, float, float>(args); }
+},
+#endif // ARM_COMPUTE_ENABLE_BF16
+
 {
     GemmMethod::GEMM_INTERLEAVED,
     "sme1_interleaved_nomerge_fp32_mopa_2VLx2VL",
@@ -133,6 +168,7 @@ GemmImplementation<float, float, float>::with_estimate(
 },
 #endif // ARM_COMPUTE_ENABLE_SME
 #ifdef ARM_COMPUTE_ENABLE_SVE
+
 #ifdef ARM_COMPUTE_ENABLE_SME2
 // SME kernels
 {
