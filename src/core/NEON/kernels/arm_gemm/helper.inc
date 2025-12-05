@@ -103,6 +103,11 @@ ldnt1h \reg2, \pred/Z, [\addr, #1, MUL VL]
 addvl \addr, \addr, #2
 .endm
 
+.macro ldnt1h_2p, reg1, reg2, pred1,pred2, addr
+ldnt1h \reg1, \pred1/Z, [\addr]
+ldnt1h \reg2, \pred2/Z, [\addr, #1, MUL VL]
+.endm
+
 .macro ld1h_4, reg1, reg2, reg3, reg4, pred, addr
 ld1h \reg1, \pred/Z, [\addr]
 ld1h \reg2, \pred/Z, [\addr, #1, MUL VL]
@@ -241,8 +246,8 @@ fmax \reg2, \pred/M, \reg2, \min_val
 .endm
 
 .macro clamp_float_1 reg, min_val, max_val, pred
-fmin \reg, \pred/M, \reg, \min_val
-fmax \reg, \pred/M, \reg, \max_val
+fmin \reg, \pred/M, \reg, \max_val
+fmax \reg, \pred/M, \reg, \min_val
 .endm
 
 .macro sclamp_convert, reg1, reg2, reg3, reg4, min_val, max_val, pred
