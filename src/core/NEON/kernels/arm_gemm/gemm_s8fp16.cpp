@@ -31,6 +31,15 @@
 #include "kernels/a64_interleaved_s8s32_mmla_8x12.hpp"
 
 #ifdef ARM_COMPUTE_ENABLE_SVE
+
+#if 0 // SME kernels not yet available.
+# ifdef ARM_COMPUTE_ENABLE_SME
+# include "kernels/sme_interleaved_nomerge_s8qfp32_mopa_1VLx4VL.hpp"
+# include "kernels/sme_interleaved_nomerge_s8qfp32_mopa_2VLx2VL.hpp"
+# include "kernels/sme_interleaved_nomerge_s8qfp32_mopa_4VLx1VL.hpp"
+# endif // ARM_COMPUTE_ENABLE_SME
+#endif
+
 #if 0 // SME2 kernels not yet available.
 # ifdef ARM_COMPUTE_ENABLE_SME2
 # include "kernels/sme2_interleaved_nomerge_s8qfp32_mopa_1VLx4VL.hpp"
@@ -51,6 +60,35 @@ namespace arm_gemm {
 static const GemmImplementation<int8_t, int8_t, __fp16, DequantizeFloat> gemm_s8fp16_methods[] =
 {
 #ifdef ARM_COMPUTE_ENABLE_SVE
+
+#if 0 // TODO: Implement and add SME kernels
+#ifdef ARM_COMPUTE_ENABLE_SME
+{
+    GemmMethod::GEMM_INTERLEAVED,
+    "sme_interleaved_nomerge_s8qfp32_mopa_1VLx4VL.hpp",
+    [](const GemmArgs &args, const DequantizeFloat &) { return args._ci->has_sme(); },
+    [](const GemmArgs &args, const DequantizeFloat &) { const auto VL = sme::get_vector_length<float>();
+                                                        return args._Msize <= VL || (2*VL < args._Msize && args._Msize <= 3*VL); },
+    [](const GemmArgs &args, const DequantizeFloat &dq) { return new GemmInterleavedNoMergeDequantized<cls_sme_interleaved_nomerge_s8qfp32_mopa_1VLx4VL, int8_t, float>(args, dq); }
+},
+{
+    GemmMethod::GEMM_INTERLEAVED,
+    "sme_interleaved_nomerge_s8qfp32_mopa_4Vx1VL.hpp",
+    [](const GemmArgs &args, const DequantizeFloat &) { return args._ci->has_sme(); },
+    [](const GemmArgs &args, const DequantizeFloat &) { const auto VL = sme::get_vector_length<float>();
+                                                        return args._Nsize <= VL || (2*VL < args._Nsize && args._Nsize <= 3*VL); },
+    [](const GemmArgs &args, const DequantizeFloat &dq) { return new GemmInterleavedNoMergeDequantized<cls_sme_interleaved_nomerge_s8qfp32_mopa_4VLx1VL, int8_t, float>(args, dq); }
+},
+{
+    GemmMethod::GEMM_INTERLEAVED,
+    "sme_interleaved_nomerge_s8qfp32_mopa_2Vx2VL.hpp",
+    [](const GemmArgs &args, const DequantizeFloat &) { return args._ci->has_sme(); },
+    nullptr,
+    [](const GemmArgs &args, const DequantizeFloat &dq) { return new GemmInterleavedNoMergeDequantized<cls_sme_interleaved_nomerge_s8qfp32_mopa_2VLx2VL, int8_t, float>(args, dq); }
+},
+#endif
+#endif
+
 #if 0 // TODO: Implement and add SME2 kernels
 #ifdef ARM_COMPUTE_ENABLE_SME2
 {

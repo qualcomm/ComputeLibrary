@@ -150,6 +150,7 @@ addvl \addr, \addr, #4
 .endm
 
 
+
 .macro st1w_2p, reg1, reg2,  pred1, pred2, addr
 st1w \reg1, \pred1, [\addr]
 st1w \reg2, \pred2, [\addr, #1, MUL VL]
