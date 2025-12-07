@@ -103,6 +103,15 @@ ldnt1h \reg2, \pred/Z, [\addr, #1, MUL VL]
 addvl \addr, \addr, #2
 .endm
 
+.macro ldnt1h_4, reg1, reg2,reg3, reg4, pred, addr
+ldnt1h \reg1, \pred/Z, [\addr]
+ldnt1h \reg2, \pred/Z, [\addr, #1, MUL VL]
+ldnt1h \reg3, \pred/Z, [\addr, #2, MUL VL]
+ldnt1h \reg4, \pred/Z, [\addr, #3, MUL VL]
+addvl \addr, \addr, #4
+.endm
+
+
 .macro ldnt1h_2p, reg1, reg2, pred1,pred2, addr
 ldnt1h \reg1, \pred1/Z, [\addr]
 ldnt1h \reg2, \pred2/Z, [\addr, #1, MUL VL]

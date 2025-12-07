@@ -288,6 +288,7 @@ filegroup(
     "core/NEON/kernels/arm_gemm/kernels/sme1_interleaved_nomerge_s8q_mopa_2VLx2VL/generic.cpp",
     "core/NEON/kernels/arm_gemm/kernels/sme1_interleaved_nomerge_s8q_mopa_4VLx1VL/generic.cpp",
 
+	"core/NEON/kernels/arm_gemm/kernels/sme_gemv_fp16fp32fp16_dot_16VL/generic.cpp",
 	"core/NEON/kernels/arm_gemm/kernels/sme_interleaved_nomerge_s8s32_mopa_1VLx4VL/generic.cpp",
 	"core/NEON/kernels/arm_gemm/kernels/sme_interleaved_nomerge_s8s32_mopa_2VLx2VL/generic.cpp",
 	"core/NEON/kernels/arm_gemm/kernels/sme_interleaved_nomerge_s8s32_mopa_4VLx1VL/generic.cpp",

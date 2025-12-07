@@ -45,6 +45,7 @@
 #include "kernels/a64_hybrid_fp16fp32fp16_mla_6x16.hpp"
 #include "kernels/a64_sgemm_8x12.hpp"
 
+#include "kernels/sme_gemv_fp16fp32fp16_dot_16VL.hpp"
 #include "kernels/sme_interleaved_nomerge_fp16fp32fp16_mopa_1VLx4VL.hpp"
 #include "kernels/sme_interleaved_nomerge_fp16fp32fp16_mopa_2VLx2VL.hpp"
 #include "kernels/sme_interleaved_nomerge_fp16fp32fp16_mopa_4VLx1VL.hpp"
@@ -67,6 +68,14 @@ namespace arm_gemm {
 static const GemmImplementation<__fp16, __fp16, __fp16> gemm_fp16_methods[] = {
 #ifdef ARM_COMPUTE_ENABLE_SVE
 #ifdef ARM_COMPUTE_ENABLE_SME
+{
+    GemmMethod::GEMM_HYBRID,
+    "sme_gemv_fp16fp32fp16_dot_16VL",
+    [](const GemmArgs &args) { return args._ci->has_sme() && args._Msize==1 && args._nbatches==1 && !args._indirect_input; },
+    nullptr,
+    [](const GemmArgs &args) { return new GemvPretransposed<cls_sme_gemv_fp16fp32fp16_dot_16VL, __fp16, __fp16>(args); }
+},
+
 {
     GemmMethod::GEMM_INTERLEAVED,
     "sme_interleaved_nomerge_fp16fp32fp16_mopa_1VLx4VL",
