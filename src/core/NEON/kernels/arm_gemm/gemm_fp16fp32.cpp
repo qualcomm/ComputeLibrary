@@ -48,10 +48,39 @@
 #include "kernels/sme2_interleaved_nomerge_fp16fp32_mopa_2VLx2VL.hpp"
 #include "kernels/sme2_interleaved_nomerge_fp16fp32_mopa_4VLx1VL.hpp"
 
+#include "kernels/sme_interleaved_nomerge_fp16fp32_mopa_1VLx4VL.hpp"
+#include "kernels/sme_interleaved_nomerge_fp16fp32_mopa_2VLx2VL.hpp"
+#include "kernels/sme_interleaved_nomerge_fp16fp32_mopa_4VLx1VL.hpp"
 
 namespace arm_gemm {
 
 static const GemmImplementation<__fp16, __fp16, float> gemm_fp16fp32_methods[] = {
+#ifdef ARM_COMPUTE_ENABLE_SME
+{
+    GemmMethod::GEMM_INTERLEAVED,
+    "sme_interleaved_nomerge_fp16fp32_mopa_1VLx4VL",
+    [](const GemmArgs &args) { return args._ci->has_sme(); },
+    [](const GemmArgs &args) { const auto VL = sme::get_vector_length<float>();
+                               return args._Msize <= VL || (2*VL < args._Msize && args._Msize <= 3*VL); },
+    [](const GemmArgs &args) { return new GemmInterleavedNoMerge<cls_sme_interleaved_nomerge_fp16fp32_mopa_1VLx4VL, __fp16, float>(args); }
+},
+{
+    GemmMethod::GEMM_INTERLEAVED,
+    "sme_interleaved_nomerge_fp16fp32_mopa_4VLx1VL",
+    [](const GemmArgs &args) { return args._ci->has_sme(); },
+    [](const GemmArgs &args) { const auto VL = sme::get_vector_length<float>();
+                               return args._Nsize <= VL || (2*VL < args._Nsize && args._Nsize <= 3*VL); },
+    [](const GemmArgs &args) { return new GemmInterleavedNoMerge<cls_sme_interleaved_nomerge_fp16fp32_mopa_4VLx1VL, __fp16, float>(args); }
+},
+{
+    GemmMethod::GEMM_INTERLEAVED,
+    "sme_interleaved_nomerge_fp16fp32_mopa_2VLx2VL",
+    [](const GemmArgs &args) { return args._ci->has_sme(); },
+    nullptr,
+    [](const GemmArgs &args) { return new GemmInterleavedNoMerge<cls_sme_interleaved_nomerge_fp16fp32_mopa_2VLx2VL, __fp16, float>(args); }
+},
+#endif // ARM_COMPUTE_ENABLE_SME
+
 #ifdef ARM_COMPUTE_ENABLE_SME2
 {
     GemmMethod::GEMM_INTERLEAVED,

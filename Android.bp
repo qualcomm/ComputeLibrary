@@ -1363,6 +1363,9 @@ cc_library_static {
                 "src/core/NEON/kernels/arm_gemm/kernels/sme_interleaved_nomerge_bf16fp32_mopa_1VLx4VL/generic.cpp",
                 "src/core/NEON/kernels/arm_gemm/kernels/sme_interleaved_nomerge_bf16fp32_mopa_2VLx2VL/generic.cpp",
                 "src/core/NEON/kernels/arm_gemm/kernels/sme_interleaved_nomerge_bf16fp32_mopa_4VLx1VL/generic.cpp",
+                "src/core/NEON/kernels/arm_gemm/kernels/sme_interleaved_nomerge_fp16fp32_mopa_1VLx4VL/generic.cpp",
+                "src/core/NEON/kernels/arm_gemm/kernels/sme_interleaved_nomerge_fp16fp32_mopa_2VLx2VL/generic.cpp",
+                "src/core/NEON/kernels/arm_gemm/kernels/sme_interleaved_nomerge_fp16fp32_mopa_4VLx1VL/generic.cpp",
                 
                 "src/core/NEON/kernels/arm_gemm/kernels/sve_ffhybrid_bf16fp32_mmla_6x4VL/generic.cpp",
                 "src/core/NEON/kernels/arm_gemm/kernels/sve_ffhybrid_fp16_mla_6x4VL/a64fx.cpp",
