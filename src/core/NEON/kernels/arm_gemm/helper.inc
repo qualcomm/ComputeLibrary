@@ -83,6 +83,14 @@ ldnt1b \reg2, \pred/Z, [\addr, #1, MUL VL]
 addvl \addr, \addr, #2
 .endm
 
+.macro ldnt1b_4, reg1, reg2, reg3, reg4, pred, addr
+ldnt1b \reg1, \pred/Z, [\addr]
+ldnt1b \reg2, \pred/Z, [\addr, #1, MUL VL]
+ldnt1b \reg3, \pred/Z, [\addr, #2, MUL VL]
+ldnt1b \reg4, \pred/Z, [\addr, #3, MUL VL]
+addvl \addr, \addr, #4
+.endm
+
 .macro ldnt1w_4, reg1, reg2, reg3, reg4, pred, addr
 ldnt1w \reg1, \pred/Z, [\addr]
 ldnt1w \reg2, \pred/Z, [\addr, #1, MUL VL]
@@ -225,6 +233,13 @@ sdot \reg3x,  \reg3,  \reg5
 sdot \reg4x,  \reg4,  \reg5
 .endm
 
+.macro udot_4, reg1x, reg2x, reg3x, reg4x, reg1, reg2, reg3, reg4, reg5
+udot \reg1x,  \reg1,  \reg5
+udot \reg2x,  \reg2,  \reg5
+udot \reg3x,  \reg3,  \reg5
+udot \reg4x,  \reg4,  \reg5
+.endm
+
 .macro fdot_4, reg1x, reg2x, reg3x, reg4x, reg1, reg2, reg3, reg4, reg5, reg6
 fmlalb \reg1x,  \reg1,  \reg5
 fmlalb \reg2x,  \reg2,  \reg5
@@ -308,6 +323,13 @@ add \reg2, \reg2, \reg5
 add \reg3, \reg3, \reg5
 add \reg4, \reg4, \reg5
 .endm
+
+.macro uzp1_4h1b, regf, regt1b,regt2b, regt1, regt2, reg1, reg2, reg3, reg4
+uzp1 \regt1, \reg1,  \reg2
+uzp1 \regt2, \reg3,  \reg4
+uzp1 \regf, \regt1b,  \regt2b
+.endm
+
 
 .macro fcvt_H2S, reg1, reg2, reg3, reg4, reg1x, reg2x, reg3x, reg4x, pred
 fcvt \reg1, \pred/M, \reg1x

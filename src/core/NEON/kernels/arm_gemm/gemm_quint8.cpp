@@ -38,6 +38,7 @@
 
 #ifdef ARM_COMPUTE_ENABLE_SVE
 #ifdef ARM_COMPUTE_ENABLE_SME
+#include "kernels/sme_gemv_u8qa_dot_16VL.hpp"
 #include "kernels/sme_interleaved_nomerge_u8q_mopa_1VLx4VL.hpp"
 #include "kernels/sme_interleaved_nomerge_u8q_mopa_2VLx2VL.hpp"
 #include "kernels/sme_interleaved_nomerge_u8q_mopa_4VLx1VL.hpp"
@@ -71,7 +72,13 @@ static const GemmImplementation<uint8_t, uint8_t, uint8_t, Requantize32> gemm_qu
 #ifdef ARM_COMPUTE_ENABLE_SVE
 #ifdef ARM_COMPUTE_ENABLE_SME
 // SME kernels
-
+{
+    GemmMethod::GEMV_PRETRANSPOSED,
+    "sme_gemv_u8qa_dot_16VL",
+    [](const GemmArgs &args, const Requantize32 &qp) { return args._ci->has_sme() && quant_hybrid_asymmetric(qp) && args._Msize == 1 && !args._indirect_input && args._nbatches == 1;  },
+    nullptr,
+    [](const GemmArgs &args, const Requantize32 &qp) { return new GemvPretransposed<cls_sme_gemv_u8qa_dot_16VL, uint8_t, uint8_t, Requantize32>(args, qp); }
+},
 {
     GemmMethod::GEMM_INTERLEAVED,
     "sme_interleaved_nomerge_u8q_mopa_1VLx4VL",
