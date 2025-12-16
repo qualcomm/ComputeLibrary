@@ -1776,6 +1776,7 @@
           "sve": {
             "common": [
               "src/core/NEON/kernels/arm_gemm/interleave_indirect-sve.cpp",
+              "src/core/NEON/kernels/arm_gemm/kernels/sme1_gemv_bf16fp32_dot_16VL/generic.cpp",
               "src/core/NEON/kernels/arm_gemm/kernels/sme2_gemv_bf16fp32_dot_16VL/generic.cpp",
               "src/core/NEON/kernels/arm_gemm/kernels/sme2_gemv_fp16_mla_16VL/generic.cpp",
               "src/core/NEON/kernels/arm_gemm/kernels/sme2_gemv_fp16fp32fp16_dot_16VL/generic.cpp",

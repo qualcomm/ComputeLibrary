@@ -52,6 +52,7 @@
 
 #ifdef ARM_COMPUTE_ENABLE_SVE
 #ifdef ARM_COMPUTE_ENABLE_SME2
+#include "kernels/sme1_gemv_bf16fp32_dot_16VL.hpp"
 #include "kernels/sme2_gemv_bf16fp32_dot_16VL.hpp"
 #include "kernels/sme2_interleaved_nomerge_bf16fp32_mopa_1VLx4VL.hpp"
 #include "kernels/sme2_interleaved_nomerge_bf16fp32_mopa_2VLx2VL.hpp"
@@ -82,6 +83,16 @@ static const GemmImplementation<bfloat16, bfloat16, float> gemm_bf16_methods[] =
     nullptr,
     [](const GemmArgs &args) { return new GemvPretransposed<cls_sme2_gemv_bf16fp32_dot_16VL, bfloat16, float>(args); }
 },
+// SME1 kernels (only for SME1-only CPUs, not SME2)
+#if 1
+{
+    GemmMethod::GEMM_HYBRID,
+    "sme1_gemv_bf16fp32_dot_16VL",
+    [](const GemmArgs &args) { return args._ci->has_sme() && args._Msize==1 && args._nbatches==1 && !args._indirect_input; },
+    nullptr,
+    [](const GemmArgs &args) { return new GemvPretransposed<cls_sme1_gemv_bf16fp32_dot_16VL, bfloat16, float>(args); }
+},
+#endif
 {
     GemmMethod::GEMM_INTERLEAVED,
     "sme2_interleaved_nomerge_bf16fp32_mopa_1VLx4VL",
